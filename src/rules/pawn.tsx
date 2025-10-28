@@ -1,0 +1,485 @@
+// import dependency
+import React, { type SetStateAction } from "react";
+
+// import type
+import { type SquareType } from "../type/type";
+
+// import data
+import { col, row } from "../data";
+
+// types
+
+interface AvailableMoveType {
+  name: string;
+  position: string;
+  square: SquareType[];
+  player: "white" | "black" | "";
+  hasMoved: boolean;
+}
+
+interface FindFrontType {
+  position: string;
+  square: SquareType[];
+  player: "white" | "black" | "";
+  hasMoved: boolean;
+}
+
+interface FindLeftType {
+  position: string;
+  player: "white" | "black" | "";
+}
+
+interface FindRightType {
+  position: string;
+  player: "white" | "black" | "";
+}
+
+interface squareEmptyType {
+  position: string;
+  square: SquareType[];
+}
+
+interface SquarePlayerType {
+  player: "white" | "black" | "" | undefined;
+  color: "white" | "black" | "";
+}
+
+interface SeTPpointer {
+  name: string;
+  position: string;
+  square: SquareType[];
+  player: "white" | "black" | "";
+  hasMoved: boolean;
+  setSquare: React.Dispatch<React.SetStateAction<SquareType[]>>;
+}
+
+interface IsPromotionType {
+  square: SquareType[];
+  player: "black" | "white" | "";
+  name: string;
+}
+
+interface MovePawnType {
+  square: SquareType[];
+  position: string;
+  setSquare: React.Dispatch<React.SetStateAction<SquareType[]>>;
+  nut: React.ReactNode;
+  pointer: boolean;
+  name: string;
+  allCapture: SquareType[];
+  setAllCapture: React.Dispatch<React.SetStateAction<SquareType[]>>;
+  player: string;
+}
+
+interface ActiveNutType {
+  position: string;
+  square: SquareType[];
+  setSquare: React.Dispatch<React.SetStateAction<SquareType[]>>;
+}
+
+interface PromotionType {
+  position: string;
+  player: "black" | "white" | "";
+  nut: React.ReactNode;
+  name: string;
+  square: SquareType[];
+  setSquare: React.Dispatch<SetStateAction<SquareType[]>>;
+}
+
+// find front
+const findFront = ({ position, square, player, hasMoved }: FindFrontType) => {
+  const postionNumber = Number(position.slice(1));
+  const indexPostionNumber =
+    col.findIndex((item) => item === postionNumber) + 1;
+
+  const postionChar = String(position.slice(0, 1));
+  const indexPostionChar = row.findIndex((item) => item === postionChar) + 1;
+
+  let findPostionCar;
+  if (hasMoved) {
+    if (player === "black") {
+      findPostionCar = row.slice(indexPostionChar - 2, indexPostionChar - 1);
+    } else {
+      findPostionCar = row.slice(indexPostionChar, indexPostionChar + 1);
+    }
+  } else {
+    if (player === "black") {
+      findPostionCar = row.slice(indexPostionChar - 3, indexPostionChar - 1);
+    } else {
+      findPostionCar = row.slice(indexPostionChar, indexPostionChar + 2);
+    }
+  }
+
+  let postionFront: string[] = [];
+
+  if (findPostionCar) {
+    if (hasMoved) {
+      postionFront = [`${findPostionCar[0]}${indexPostionNumber}`];
+    } else {
+      postionFront = [
+        `${findPostionCar[0]}${indexPostionNumber}`,
+        `${findPostionCar[1]}${indexPostionNumber}`,
+      ];
+    }
+  } else {
+    postionFront = [];
+  }
+
+  return postionFront;
+};
+
+const findLeft = ({ position, player }: FindLeftType) => {
+  const positionNumber = Number(position.slice(1));
+  const findIndexCol = col.findIndex((item) => item == positionNumber) + 1;
+  const findPostionNumberLeft = col.slice(findIndexCol - 2, findIndexCol - 1);
+
+  const postionChar = String(position.slice(0, 1));
+  const findIndexRow = row.findIndex((item) => item === postionChar);
+  let findPostionCharLeft;
+
+  if (player == "white") {
+    findPostionCharLeft = row.slice(findIndexRow + 1, findIndexRow + 2);
+  } else {
+    findPostionCharLeft = row.slice(findIndexRow - 1, findIndexRow);
+  }
+
+  let findLeft: string[];
+  if (findPostionNumberLeft[0]) {
+    findLeft = [`${findPostionCharLeft[0]}${findPostionNumberLeft[0]}`];
+  } else {
+    findLeft = [];
+  }
+
+  return findLeft;
+};
+
+const findRight = ({ position, player }: FindRightType) => {
+  const positionNumber = Number(position.slice(1));
+  const findIndexPositionNumber =
+    col.findIndex((item) => item === positionNumber) + 1;
+  const findPostionNumber = col.slice(
+    findIndexPositionNumber,
+    findIndexPositionNumber + 1
+  );
+
+  const positionCahr = String(position.slice(0, 1));
+  const findIndexPositionChar = row.findIndex((item) => item === positionCahr);
+  let findePostionChar: string[] = [];
+
+  if (player === "white") {
+    findePostionChar = row.slice(
+      findIndexPositionChar + 1,
+      findIndexPositionChar + 2
+    );
+  } else {
+    findePostionChar = row.slice(
+      findIndexPositionChar - 1,
+      findIndexPositionChar
+    );
+  }
+
+  let findRight: string[] = [];
+
+  if (findPostionNumber[0]) {
+    findRight = [`${findePostionChar}${findPostionNumber}`];
+  } else {
+    findRight = [];
+  }
+
+  return findRight;
+};
+const squareEmpty = ({ position, square }: squareEmptyType) => {
+  const findSquare = square.find((item) => item.position == position);
+
+  if (findSquare?.name === "") {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const squarePlayer = ({ player, color }: SquarePlayerType) => {
+  if (player === color) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export const findAvailableMovis = ({
+  name,
+  position,
+  square,
+  player,
+  hasMoved,
+}: AvailableMoveType) => {
+  let findPointerMove: unknown[] = [];
+
+  let findSquareLeftPosition = findLeft({ position, player });
+  let findeSquareLeft = square.find(
+    (item) => item.position == findSquareLeftPosition[0]
+  );
+
+  if (player === "black") {
+    if (squarePlayer({ player: findeSquareLeft?.player, color: "" })) {
+      findPointerMove = [...findPointerMove];
+    }
+    if (squarePlayer({ player: findeSquareLeft?.player, color: "black" })) {
+      findPointerMove = [...findPointerMove];
+    }
+
+    if (squarePlayer({ player: findeSquareLeft?.player, color: "white" })) {
+      findPointerMove = [...findPointerMove, ...findSquareLeftPosition];
+    }
+  } else {
+    if (squarePlayer({ player: findeSquareLeft?.player, color: "" })) {
+      findPointerMove = [...findPointerMove];
+    }
+    if (squarePlayer({ player: findeSquareLeft?.player, color: "black" })) {
+      findPointerMove = [...findPointerMove, ...findSquareLeftPosition];
+    }
+
+    if (squarePlayer({ player: findeSquareLeft?.player, color: "white" })) {
+      console.log(44);
+      findPointerMove = [...findPointerMove];
+    }
+  }
+
+  let findSquareFront;
+  if (player === "black") {
+    findSquareFront = findFront({
+      position,
+      square,
+      player,
+      hasMoved,
+    }).reverse();
+  } else {
+    findSquareFront = findFront({
+      position,
+      square,
+      player,
+      hasMoved,
+    });
+  }
+
+  if (findSquareFront.length == 2) {
+    if (
+      !squareEmpty({ position: findSquareFront[0], square }) &&
+      !squareEmpty({ position: findSquareFront[1], square })
+    ) {
+      findPointerMove = [...findPointerMove, ...findSquareFront];
+    } else if (
+      !squareEmpty({ position: findSquareFront[0], square }) ||
+      squareEmpty({ position: findSquareFront[1], square })
+    ) {
+      findPointerMove = [...findPointerMove, findSquareFront[0]];
+    }
+  } else if (!squareEmpty({ position: findSquareFront[0], square })) {
+    findPointerMove = [...findPointerMove, ...findSquareFront];
+  }
+
+  let findSquareRightPosition = findRight({ position, player });
+
+  let findSquareRight = square.find(
+    (item) => item.position === findSquareRightPosition[0]
+  );
+  if (player === "black") {
+    if (squarePlayer({ player: findSquareRight?.player, color: "white" })) {
+      findPointerMove = [...findPointerMove, ...findSquareRightPosition];
+    }
+    if (squarePlayer({ player: findSquareRight?.player, color: "black" })) {
+      findPointerMove = [...findPointerMove];
+    }
+    if (squarePlayer({ player: findSquareRight?.player, color: "" })) {
+      findPointerMove = [...findPointerMove];
+    }
+  } else {
+    if (squarePlayer({ player: findSquareRight?.player, color: "white" })) {
+      findPointerMove = [...findPointerMove];
+    }
+    if (squarePlayer({ player: findSquareRight?.player, color: "black" })) {
+      findPointerMove = [...findPointerMove, ...findSquareRightPosition];
+    }
+    if (squarePlayer({ player: findSquareRight?.player, color: "" })) {
+      findPointerMove = [...findPointerMove];
+    }
+  }
+
+  return findPointerMove;
+};
+
+export const setPpointer = ({
+  name,
+  position,
+  square,
+  player,
+  hasMoved,
+  setSquare,
+}: SeTPpointer) => {
+  if (name === "pawn") {
+    const pointer = findAvailableMovis({
+      name,
+      position,
+      square,
+      player,
+      hasMoved,
+    });
+    resetPointer(square, setSquare);
+    let newSquare: SquareType[] = [];
+    square.map((item) => {
+      pointer.map((i) => {
+        if (i === item.position) {
+          item.pointer = true;
+        }
+      });
+      newSquare.push(item);
+    });
+    setSquare(newSquare);
+  }
+};
+
+export const resetPointer = (
+  square: SquareType[],
+  setSquare: React.Dispatch<React.SetStateAction<SquareType[]>>
+) => {
+  const newSquare: SquareType[] = [];
+
+  square.map((item) => {
+    item.pointer = false;
+    newSquare.push(item);
+  });
+
+  setSquare(newSquare);
+};
+
+export const activeNut = ({ position, setSquare, square }: ActiveNutType) => {
+  const newSquare: SquareType[] = [];
+
+  square.map((item) => {
+    if (item.name != "") {
+      if (position == item.position) {
+        item.active = true;
+      }
+    }
+    newSquare.push(item);
+  });
+  setSquare(newSquare);
+};
+
+export const movePawn = ({
+  position,
+  setSquare,
+  square,
+  nut,
+  pointer,
+  player,
+  name,
+  allCapture,
+  setAllCapture,
+}: MovePawnType) => {
+  const active = square.find((item) => item.active === true);
+
+  const activePostion = active?.position;
+  let playerColor = active?.player;
+
+  let updateActive: SquareType[] = [];
+
+  square.map((item) => {
+    item.active = false;
+    updateActive.push(item);
+  });
+
+  setSquare(updateActive);
+  if (!pointer == true && name != "") {
+    activeNut({ position, setSquare, square });
+  }
+
+  const newSquare: SquareType[] = [];
+  if (active?.position) {
+    if (pointer) {
+      square.map((item) => {
+        if (item.position === position) {
+          if (player !== "" && pointer === true) {
+            const capture = JSON.parse(JSON.stringify(item));
+            setAllCapture((pre) => [...pre, capture]);
+          }
+          if (playerColor === "black") {
+            item.name = active.name;
+            item.nut = active.nut;
+            item.hasMoved = true;
+            item.player = playerColor;
+          } else if (playerColor === "white") {
+            item.name = active.name;
+            item.nut = active.nut;
+            item.hasMoved = true;
+            item.player = playerColor;
+          }
+        }
+        item.active = false;
+        newSquare.push(item);
+      });
+
+      square.map((item) => {
+        if (item.position === activePostion) {
+          item.name = "";
+          item.nut = "";
+          item.hasMoved = true;
+          item.player = "";
+        }
+      });
+
+      setSquare(newSquare);
+    }
+  }
+};
+
+export const isPromotion = ({ square, player, name }: IsPromotionType) => {
+  let promotion: SquareType[] = [];
+
+  let result = square.some((item) => {
+    if (item.name == "pawn") {
+      if (item.player == "black") {
+        const postionNut = String(item.position.slice(0, 1));
+        if (postionNut === "A") {
+          promotion.push(item);
+          return true;
+        } else {
+          return false;
+        }
+      }
+      if (item.player == "white") {
+        const postionNut = String(item.position.slice(0, 1));
+        if (postionNut === "H") {
+          promotion.push(item);
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+  });
+
+  return { result, promotion };
+};
+
+export const promotion = ({
+  position,
+  nut,
+  player,
+  name,
+  square,
+  setSquare,
+}: PromotionType) => {
+  const newSquare: SquareType[] = [];
+
+  square.map((item) => {
+    if (item.position == position) {
+      console.log(position);
+      item.nut = nut;
+      item.player = player;
+      item.name = name;
+    }
+    newSquare.push(item);
+  });
+  setSquare(newSquare);
+};

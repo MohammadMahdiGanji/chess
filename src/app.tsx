@@ -4,10 +4,15 @@ import { type JSX } from "react";
 // import component
 import Chess from "./page/chess";
 
+// import provider context
+import { ChessContextProvider } from "./context/chess";
+
 function App(): JSX.Element {
   return (
     <div className="text-center">
-      <Chess />
+      <ChessContextProvider>
+        <Chess />
+      </ChessContextProvider>
     </div>
   );
 }

@@ -1,0 +1,110 @@
+// import dependency
+import {
+  useContext,
+  useEffect,
+  useState,
+  type JSX,
+  type ReactElement,
+} from "react";
+
+// import type
+import { type SquareType } from "../../type/type";
+
+// import rules
+import {
+  setPpointer,
+  resetPointer,
+  activeNut,
+  movePawn,
+  isPromotion,
+  promotion,
+} from "../../rules/pawn";
+
+// import context
+import { ChessContext } from "../../context/chess";
+
+// import component
+import ModalPromotion from "../modal/modalPromotion";
+
+export default function Square({
+  id,
+  position,
+  pointer,
+  name,
+  nut,
+  player,
+  captured,
+  hasMoved,
+  availableMovis,
+}: SquareType): JSX.Element {
+  const { square, setSquare, allCapture, setAllCapture } =
+    useContext(ChessContext);
+
+  const [infoPawnPromotion, setInfoPawnPromotion] = useState<{
+    result: boolean;
+    promotion: SquareType[];
+  }>();
+
+  const positionString: string = String(position.slice(0, 1));
+
+  const clickHandlerSquare = () => {
+    resetPointer(square, setSquare);
+
+    if (!pointer == true && name != "") {
+      setPpointer({ name, position, square, player, hasMoved, setSquare });
+
+      activeNut({ position, setSquare, square });
+    }
+
+    movePawn({
+      position,
+      setSquare,
+      square,
+      nut,
+      pointer,
+      allCapture,
+      setAllCapture,
+      name,
+      player,
+    });
+    const isPownPromotion = isPromotion({ square, player, name });
+    if (isPownPromotion) {
+      setInfoPawnPromotion(isPownPromotion);
+    }
+  };
+
+  return (
+    <span
+      onClick={clickHandlerSquare}
+      className={`w-16 h-16 
+      transition-all
+      duration-150
+     col-span-1     
+     bg-[#b5dcf4b1]
+     flex items-center justify-center
+     ${
+       ["A", "C", "E", "G"].includes(positionString)
+         ? ` ${pointer && name != "" ? "bg-red-300" : "odd:bg-[#3396D3]"}`
+         : `${pointer && name != "" ? "bg-red-300" : "even:bg-[#3396D3] "}`
+     }
+     ${pointer && "cursor-pointer"}
+       ${pointer && name != "" && "bg-red-300"}`}
+    >
+      <span
+        className={`text-5xl ${
+          player == "white" ? "text-[#FFECC0]" : "text-black"
+        } ${nut !== "" ? "cursor-pointer" : ""}`}
+      >
+        {pointer && (
+          <span
+            className={`w-4 h-4 bg-purple-400 rounded-full block ${
+              pointer && name != "" ? "hidden" : "block"
+            }`}
+          ></span>
+        )}
+        {nut}
+      </span>
+      <ModalPromotion isPownPromotion={infoPawnPromotion} square={square} setSquare={setSquare} />
+    </span>
+  );
+}
