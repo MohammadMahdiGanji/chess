@@ -13,7 +13,7 @@ import {
   avaliableMove,
   moveNut,
 } from "../../rules/shared";
-
+import { availableMoveRook } from "../../rules/rook";
 
 // import context
 import { ChessContext } from "../../context/chess";
@@ -93,6 +93,7 @@ export default function Square({
     *********************************
   */
     }
+    availableMoveRook({position, player,square,name})
   };
 
   return (

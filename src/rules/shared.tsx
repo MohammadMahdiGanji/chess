@@ -5,6 +5,7 @@ import { type SquareType } from "../type/type";
 // import rule
 import { findAvailableMovisPawn } from "./pawn";
 import { availiabelMovisKnight } from "./knight";
+import { availableMoveRook } from "./rook";
 
 // types this file
 
@@ -150,6 +151,9 @@ export const avaliableMove = ({
     case "knight":
       avaliableMove = availiabelMovisKnight({ square, player });
       break;
+    case "rook":
+      avaliableMove = availableMoveRook({position,square,player,name})
+      break
   }
   return avaliableMove;
 };
