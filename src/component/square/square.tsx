@@ -13,8 +13,7 @@ import {
   avaliableMove,
   moveNut,
 } from "../../rules/shared";
-import { availableMoveRook } from "../../rules/rook";
-
+import { avialiableBishopMove } from "../../rules/bishop";
 // import context
 import { ChessContext } from "../../context/chess";
 
@@ -81,7 +80,6 @@ export default function Square({
       player,
     });
 
-
     const isPownPromotion = isPromotionPawn({ square });
     if (isPownPromotion) {
       setInfoPawnPromotion(isPownPromotion);
@@ -93,7 +91,7 @@ export default function Square({
     *********************************
   */
     }
-    availableMoveRook({position, player,square,name})
+    avialiableBishopMove({ position, square });
   };
 
   return (

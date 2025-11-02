@@ -6,6 +6,7 @@ import { type SquareType } from "../type/type";
 import { findAvailableMovisPawn } from "./pawn";
 import { availiabelMovisKnight } from "./knight";
 import { availableMoveRook } from "./rook";
+import { avialiableBishopMove } from "./bishop";
 
 // types this file
 
@@ -59,7 +60,6 @@ interface MoveNutPropType {
   setAllCapture: React.Dispatch<React.SetStateAction<SquareType[]>>;
   player: string;
 }
-
 
 // this function for is activate nut
 export const activeNut = ({
@@ -152,14 +152,16 @@ export const avaliableMove = ({
       avaliableMove = availiabelMovisKnight({ square, player });
       break;
     case "rook":
-      avaliableMove = availableMoveRook({position,square,player,name})
-      break
+      avaliableMove = availableMoveRook({ position, square, player, name });
+      break;
+    case "bishop":
+      avaliableMove = avialiableBishopMove({ position, square });
+      break;
   }
   return avaliableMove;
 };
 
-
-// this function is for move nut 
+// this function is for move nut
 export const moveNut = ({
   position,
   setSquare,
@@ -187,42 +189,41 @@ export const moveNut = ({
   }
 
   const newSquare: SquareType[] = [];
-  
-    if (active?.position) {
-      if (pointer) {
-        square.map((item) => {
-          if (item.position === position) {
-            if (player !== "" && pointer === true) {
-              const capture = JSON.parse(JSON.stringify(item));
-              setAllCapture((pre) => [...pre, capture]);
-            }
-            if (playerColor === "black") {
-              item.name = active.name;
-              item.nut = active.nut;
-              item.hasMoved = true;
-              item.player = playerColor;
-            } else if (playerColor === "white") {
-              item.name = active.name;
-              item.nut = active.nut;
-              item.hasMoved = true;
-              item.player = playerColor;
-            }
-          }
-          item.active = false;
-          newSquare.push(item);
-        });
 
-        square.map((item) => {
-          if (item.position === activePostion) {
-            item.name = "";
-            item.nut = "";
+  if (active?.position) {
+    if (pointer) {
+      square.map((item) => {
+        if (item.position === position) {
+          if (player !== "" && pointer === true) {
+            const capture = JSON.parse(JSON.stringify(item));
+            setAllCapture((pre) => [...pre, capture]);
+          }
+          if (playerColor === "black") {
+            item.name = active.name;
+            item.nut = active.nut;
             item.hasMoved = true;
-            item.player = "";
+            item.player = playerColor;
+          } else if (playerColor === "white") {
+            item.name = active.name;
+            item.nut = active.nut;
+            item.hasMoved = true;
+            item.player = playerColor;
           }
-        });
+        }
+        item.active = false;
+        newSquare.push(item);
+      });
 
-        setSquare(newSquare);
-      }
+      square.map((item) => {
+        if (item.position === activePostion) {
+          item.name = "";
+          item.nut = "";
+          item.hasMoved = true;
+          item.player = "";
+        }
+      });
+
+      setSquare(newSquare);
     }
-  
+  }
 };
