@@ -49,10 +49,11 @@ export default function ModalPromotion({
   };
 
   return ReactDom.createPortal(
-    <div className="fixed top-0 bg-[rgba(0,0,0,0.01)] backdrop-blur-sm right-0 left-0 bottom-0 ">
-      <div className="h-full w-full flex items-center justify-center">
-        <div className=" bg-[rgba(255,255,255,0.2)] p-10 pt-5 rounded-md border-[1px] border-white">
-          <h2 className="text-center text-lg font-bold mb-6 text-white">
+    <div className="fixed top-0 bg-[rgba(0,0,0,0.01)] backdrop-blur-sm right-0 left-0 bottom-0 z-50">
+      <div className="w-[400px] mx-auto mt-[250px]">
+        <div className=" bg-[rgba(255,255,255,0.2)] p-10  mx-auto
+        pt-5 rounded-md border-[1px] border-white relative z-40">
+          <h2 className="text-center text-lg font-bold mb-6 text-black">
             Select a piece to promote your pawn.
           </h2>
           <div className="flex gap-2 bg-[rgba(255,255,255,0.01)]">
@@ -112,6 +113,6 @@ export default function ModalPromotion({
         </div>
       </div>
     </div>,
-    document.getElementById("modal") as HTMLDivElement
+    document.getElementById("modal") as HTMLDivElement 
   );
 }

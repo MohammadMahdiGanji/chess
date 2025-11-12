@@ -46,14 +46,14 @@ export default function Capture({
       <div>
         <span
           className={`text-5xl w-16 h-16 flex items-center shadow-[0px_0px_10px_white]
-           justify-center bg-[#33c8d3] rounded-2xl
+           justify-center bg-[#33c8d3] rounded-2xl backdrop-blur-sm
            col-span-1 row-span-1 ${
              player === "white" ? "text-white" : "text-black"
            }`}
         >
           <Icon />
         </span>
-        <span>{position}</span>
+        <span className="text-white">{position}</span>
       </div>
     </>
   );

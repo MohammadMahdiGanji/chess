@@ -58,16 +58,16 @@ const initailSquare: initailSquareType[] = [
 row.forEach((r) => {
   col.forEach((c) => {
     const square: SquareType = {
-      id: `${r}${c}`,
+      id: crypto.randomUUID(),
       position: `${r}${c}`,
       pointer: false,
       name: "",
       nut: null,
-      active:false,
+      active: false,
       player: "",
-      captured: false,
       hasMoved: false,
-      availableMovis: [],
+      isCheckBlack: false,
+      isCHeckWhite: false,
     };
     squares.push(square);
   });

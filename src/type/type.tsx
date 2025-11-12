@@ -1,3 +1,5 @@
+import React, { type SetStateAction } from "react";
+
 export interface SquareType {
   id: string;
   position: string;
@@ -5,8 +7,8 @@ export interface SquareType {
   name: string;
   nut: React.ReactNode;
   player: "white" | "black" | "";
-  captured: boolean;
   hasMoved: boolean;
-  availableMovis: [];
-  active:boolean
+  active: boolean;
+  isCheckBlack: boolean;
+  isCHeckWhite: boolean;
 }
